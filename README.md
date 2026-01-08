@@ -112,11 +112,11 @@ Only use on networks you own or have explicit permission to test. Unauthorized a
 
 - Inspired by [Pwnagotchi](https://pwnagotchi.ai/) by @evilsocket
 - Built for [WiFi Pineapple](https://hak5.org/) by Hak5
-- Created with help from Claude AI
+- Built for security research and education
 
 ## License
 
-MIT License - do whatever you want, just don't be evil! 😈
+MIT License - use responsibly for authorized testing only.
 
 ---
 
