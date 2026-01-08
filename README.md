@@ -1,117 +1,145 @@
 # 🍍 Pwnagotchi Nano
 
-**Pwnagotchi-like WiFi hunter for Pineapple Nano with TinyML learning**
+**Pwnagotchi-like WiFi hunter with TinyML learning**
 
 *!* 
 
-## What is this?
+## Two Versions
 
-A lightweight, autonomous WiFi handshake hunter inspired by [Pwnagotchi](https://pwnagotchi.ai/), but designed for the resource-constrained **WiFi Pineapple Nano** (60MB RAM, 500MHz MIPS CPU).
+### 📱 Nano Edition (`/nano`)
+For **WiFi Pineapple Nano** - lightweight, BusyBox compatible, TinyML on-device learning.
+
+### 🐧 Linux Edition (`/linux`)  
+For **Kali, Ubuntu, WSL2, Debian** - full featured, PMKID + Deauth, Python ML.
+
+---
 
 ## Features
 
-✅ **Autonomous hunting** - plug in, walk away, collect handshakes  
-✅ **TinyML on-device learning** - learns best channels, times, signal strengths  
-✅ **Hybrid learning** - advanced training on laptop when connected  
-✅ **Safe operation** - never writes to flash, all data on SD card  
-✅ **Target mode** - focus on specific network or hunt all  
-✅ **BusyBox compatible** - pure shell scripts, no Python needed  
+| Feature | Nano | Linux |
+|---------|------|-------|
+| Deauth attack | ✅ | ✅ |
+| PMKID attack | ❌ | ✅ |
+| 2.4 GHz | ✅ | ✅ |
+| 5 GHz | ❌ | ✅ |
+| TinyML learning | ✅ | ✅ |
+| Python ML | ❌ | ✅ |
+| Auto card detect | ❌ | ✅ |
 
-## TODO / Roadmap
+---
 
-- [ ] **PMKID attack** - capture without clients (like Pwnagotchi)
-- [ ] **Dynamic parameters** - auto-adjust timeouts based on movement
-- [ ] **Better reward function** - closer to Pwnagotchi's A2C approach
-- [ ] **Bluetoothgotchi mode** - BT/BLE scanning with USB adapter
-- [ ] **E-ink display support** - show status on small screen
-- [ ] **Mesh networking** - multiple units cooperating
+## Linux Edition
 
-## Hardware
+### Supported Cards
+- **Alfa AWUS036ACH** (RTL8812AU) ⭐ Recommended
+- Alfa AWUS036NHA (Atheros)
+- TP-Link TL-WN722N v1 (Atheros)
+- Any card with monitor mode + injection
 
-- WiFi Pineapple Nano (Hak5)
-- SD Card (recommended 8GB+)
-- USB power source
-
-## Installation
+### Installation
 
 ```bash
-# Copy scripts to Pineapple
-scp autopwn.sh root@172.16.42.1:/sd/autopwn/
-scp autopwn_tinyml.sh root@172.16.42.1:/sd/autopwn/
+# Clone repo
+git clone https://github.com/netcuter/pwnagotchi_nano.git
+cd pwnagotchi_nano/linux
 
-# Initialize brain
+# Make executable
+chmod +x autopwn_linux.sh
+
+# Run (needs root)
+sudo ./autopwn_linux.sh start
+```
+
+### Usage
+
+```bash
+# Start hunting all networks
+sudo ./autopwn_linux.sh start
+
+# Scan networks once
+sudo ./autopwn_linux.sh scan
+
+# Attack specific network
+sudo ./autopwn_linux.sh attack "MyWiFi"
+
+# Target mode - only hunt specific network
+sudo ./autopwn_linux.sh -t "TargetNetwork" start
+
+# Check status
+./autopwn_linux.sh status
+```
+
+### Dependencies
+- aircrack-ng suite (auto-installed)
+- hcxdumptool + hcxtools (optional, for PMKID)
+
+```bash
+# Ubuntu/Debian/Kali
+sudo apt install aircrack-ng hcxdumptool hcxtools
+
+# Arch
+sudo pacman -S aircrack-ng hcxdumptool hcxtools
+```
+
+---
+
+## Nano Edition
+
+### Hardware
+- WiFi Pineapple Nano
+- SD Card (8GB+)
+- USB power
+
+### Installation
+
+```bash
+# Copy to Pineapple
+scp nano/autopwn.sh root@172.16.42.1:/sd/autopwn/
+scp nano/autopwn_tinyml.sh root@172.16.42.1:/sd/autopwn/
+
+# Initialize
 ssh root@172.16.42.1 "/sd/autopwn/autopwn_tinyml.sh init"
 
-# Start hunting!
+# Start
 ssh root@172.16.42.1 "/sd/autopwn/autopwn.sh start"
 ```
 
-## Usage
+---
 
-```bash
-# Start autonomous mode
-/sd/autopwn/autopwn.sh start
+## How Learning Works
 
-# Check status
-/sd/autopwn/autopwn.sh status
-
-# View captured handshakes
-/sd/autopwn/autopwn.sh cracked
-
-# TinyML brain stats
-/sd/autopwn/autopwn_tinyml.sh stats
-
-# Set target network (or PWNAGOTCHI for all)
-echo "MODE=MyWiFiNetwork" > /sd/autopwn/target.txt
-```
-
-## How TinyML Learning Works
-
-The device learns on its own without external computer:
+Both versions learn from experience:
 
 1. **Channels** - which WiFi channels have best success rate
-2. **Hours** - what time of day works best  
+2. **Techniques** - deauth vs PMKID effectiveness
 3. **Signal strength** - minimum dBm worth attacking
+4. **Time of day** - when attacks work best
 
-Data stored in `/sd/autopwn/brain/`:
-```
-channels.db  - success rate per channel (1-13)
-hours.db     - success rate per hour (0-23)
-signals.db   - success rate per signal category
-```
+Data stored in `brain/` directory.
 
-## Hybrid Training (Optional)
-
-When connected to laptop via USB:
-
-```bash
-# On laptop (WSL/Linux)
-python3 autopwn_trainer.py
-```
-
-This pulls data from Nano, trains better model, uploads optimized rules.
-
-## Comparison with Pwnagotchi
-
-| Feature | Pwnagotchi | Pwnagotchi Nano |
-|---------|------------|-----------------|
-| Hardware | Raspberry Pi | Pineapple Nano |
-| RAM | 512MB+ | 60MB |
-| AI | Neural Network (A2C) | TinyML (statistics) |
-| Techniques | Deauth + PMKID | Deauth (PMKID TODO) |
-| Display | E-ink | None (TODO) |
-| Learning | On-device | On-device + laptop |
+---
 
 ## Legal Disclaimer
 
 ⚠️ **FOR EDUCATIONAL AND AUTHORIZED TESTING ONLY** ⚠️
 
-Only use on networks you own or have explicit permission to test. Unauthorized access to computer networks is illegal.
+Only use on networks you own or have explicit permission to test.
+
+---
+
+## TODO
+
+- [ ] PMKID for Nano (needs hcxdumptool port)
+- [ ] Bluetooth scanning mode
+- [ ] E-ink display support
+- [ ] Mesh networking between units
+- [ ] Web interface
+
+---
 
 ## Credits
 
-- Inspired by [Pwnagotchi](https://pwnagotchi.ai/) by @evilsocket
-- Built for [WiFi Pineapple](https://hak5.org/) by Hak5
+- Inspired by [Pwnagotchi](https://pwnagotchi.ai/)
 - Built for security research and education
 
 ## License
@@ -119,7 +147,5 @@ Only use on networks you own or have explicit permission to test. Unauthorized a
 MIT License - use responsibly for authorized testing only.
 
 ---
-
-*"The harvest is plentiful, but the workers are few."* - Matthew 9:37
 
 **Done!** 
