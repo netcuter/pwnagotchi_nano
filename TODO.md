@@ -76,3 +76,15 @@
 *"Faith without works is dead"* - James 2:26
 
 **Done!** 
+
+## URGENT - Hardware Repair 🔧
+
+### Pineapple Nano Bootloop Fix
+- [ ] Buy USB-UART adapter (3.3V!)
+- [ ] Connect to serial console pins on Nano
+- [ ] Diagnose bootloop cause (kernel panic from kmod-usb-net-cdc-ncm)
+- [ ] Reflash firmware if needed: https://downloads.hak5.org/
+- [ ] Restore data from SD card after fix
+- [ ] **DO NOT install kernel modules on flash again!**
+
+---
