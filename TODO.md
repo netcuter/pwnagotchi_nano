@@ -88,3 +88,10 @@
 - [ ] **DO NOT install kernel modules on flash again!**
 
 ---
+
+### Bluetooth Adapter - Need New Hardware 🔵
+- [ ] Buy compatible BT adapter (TP-Link UB500 / ASUS USB-BT500)
+- [ ] Old KY-BT100 (1131:1001) is INCOMPATIBLE with modern Linux (btusb bug since 2008!)
+- [ ] Need BLE 4.0+ support for pentesting
+- [ ] Recommended chipsets: CSR8510, Realtek RTL8761B
+
